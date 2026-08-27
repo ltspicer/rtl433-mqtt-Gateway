@@ -14,6 +14,8 @@ Meine (Casativo) Wetterstation ist von Ideoon (Pearl), welche nur mit der Weathe
 
 ![Screenshot](https://github.com/ltspicer/rtl433-mqtt-Gateway/blob/main/casativo_ideoon_weatherstation.png)
 
+---
+
 ## 1. rtl_433 aus den Quellen kompilieren
 
 Um die neuesten Sensoren zu unterstützen, sollte `rtl_433` direkt aus dem offiziellen GitHub-Repository kompiliert werden.
@@ -86,6 +88,8 @@ Du kannst entweder mit diesem 1-Zeiler arbeiten:
 oder das Skript nach `/opt/rtl433-mqtt/rtl433_mqtt.py` kopieren und ausführbar machen:
 
 `sudo chmod +x /opt/rtl433-mqtt/rtl433_mqtt.py`
+
+---
 
 ## 3. systemd konfigurieren
 
