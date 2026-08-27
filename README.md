@@ -12,7 +12,7 @@ Meine Wetterstation ist von Ideoon (Pearl), welche nur mit der WeatherSense Clou
 
 ![Screenshot](https://github.com/ltspicer/rtl433-mqtt-Gateway/blob/main/casativo_ideoon_weatherstation.png)
 
-## 🛠️ 1. rtl_433 aus den Quellen kompilieren
+## 1. rtl_433 aus den Quellen kompilieren
 
 Um die neuesten Sensoren zu unterstützen, sollte `rtl_433` direkt aus dem offiziellen GitHub-Repository kompiliert werden.
 
@@ -39,7 +39,7 @@ rtl_433 -V
 
 ---
 
-## 📂 2. Projekt-Struktur anlegen
+## 2. Projekt-Struktur anlegen
 
 Erstelle das Anwendungsverzeichnis auf deinem (Debian) System:
 ```bash
@@ -76,7 +76,7 @@ logging:
 ### Python-Skript: `/opt/rtl433-mqtt/rtl433_mqtt.py`
 Kopiere das Skript nach `/opt/rtl433-mqtt/rtl433_mqtt.py`. **Vergiss nicht, das Skript danach mit `chmod +x /opt/rtl433-mqtt/rtl433_mqtt.py` ausführbar zu machen.**
 
-### systemd konfigurieren
+## 3. systemd konfigurieren
 
 `sudo nano /etc/systemd/system/rtl433-mqtt.service`
 
