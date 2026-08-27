@@ -49,7 +49,7 @@ sudo mkdir -p /opt/rtl433-mqtt
 ```
 
 ### Konfigurationsdatei: `/opt/rtl433-mqtt/config.yaml`
-Erstelle die Konfiguration mit `nano /opt/rtl433-mqtt/config.yaml`:
+Erstelle die Konfiguration mit `sudo nano /opt/rtl433-mqtt/config.yaml`:
 
 ```yaml
 rtl_433:
@@ -78,7 +78,7 @@ logging:
 ### Python-Skript: `/opt/rtl433-mqtt/rtl433_mqtt.py`
 Kopiere das Skript nach `/opt/rtl433-mqtt/rtl433_mqtt.py`.
 
-**Vergiss nicht, das Skript danach mit `chmod +x /opt/rtl433-mqtt/rtl433_mqtt.py` ausführbar zu machen.**
+**Vergiss nicht, das Skript danach mit `sudo chmod +x /opt/rtl433-mqtt/rtl433_mqtt.py` ausführbar zu machen.**
 
 ## 3. systemd konfigurieren
 
