@@ -254,6 +254,8 @@ for line in proc.stdout:
         is_allowed = True
     elif isinstance(MODEL_FILTER, str) and current_model == MODEL_FILTER:
         is_allowed = True
+    else:
+        logging.warning(f"Ungültiges Format für model_filter in config.yaml. Paket für {current_model} wird ignoriert.")
 
     if is_allowed:
         sensor_id = data.get("id", "unknown")
