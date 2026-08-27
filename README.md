@@ -4,11 +4,11 @@ Dieses Projekt stellt eine ereignisgesteuerte Bridge bereit, die mithilfe eines 
 
 Ich selber habe einen "RTL2832U & R828D SDR USB2.0 TV-Stick-Tuner 25 MHz bis 1760 MHz" von https://de.aliexpress.com/item/1005005278623123.html
 
-![Screenshot](https://github.com/ltspicer/WeatherSense/blob/main/sdr-stick.png)
+![Screenshot](https://github.com/ltspicer/rtl433-mqtt-Gateway/blob/main/sdr-stick.png)
 
 Meine Wetterstation ist von Ideoon (Pearl)
 
-![Screenshot](https://github.com/ltspicer/WeatherSense/blob/main/casativo_ideoon_weatherstation.png)
+![Screenshot](https://github.com/ltspicer/rtl433-mqtt-Gateway/blob/main/casativo_ideoon_weatherstation.png)
 
 ## 🛠️ 1. rtl_433 aus den Quellen kompilieren
 
