@@ -1,6 +1,6 @@
 # rtl433-mqtt Gateway
 
-Dieses Projekt stellt eine ereignisgesteuerte Bridge bereit, die mithilfe eines SDR-Sticks und `rtl_433` die Funksignale von Wetterstationen (z. B. *Emax-W6*) abfängt. Die Daten werden in Celsius umgerechnet, lokale Statistiken für den Regenverlauf (Stunde, Tag, Gestern, Monat, Jahr) kalkuliert und die Werte sauber strukturiert per MQTT an einen Broker (zBsp. für den ioBroker `MQTT`-Adapter) übergeben.
+Dieses Projekt stellt eine ereignisgesteuerte Bridge bereit, die mithilfe eines SDR-Sticks und `rtl_433` die Funksignale von Wetterstationen (z. B. *Emax-W6*) abfängt. Die Daten werden zusätzlich in Celsius umgerechnet, lokale Statistiken für den Regenverlauf (Stunde, Tag, Gestern, Monat, Jahr) kalkuliert und die Werte sauber strukturiert per MQTT an einen Broker (zBsp. für den ioBroker `MQTT`-Adapter) übergeben.
 
 Bei mir läuft dieses Script in einem Proxmox LXC (Container) mit Debian.
 
