@@ -81,11 +81,11 @@ logging:
 
 ### Python-Skript holen:
 
-Du kannst entweder mit diesem 1-Zeiler arbeiten:
+Du kannst entweder mit diesem **1-Zeiler** arbeiten:
 
 `sudo wget -O /opt/rtl433-mqtt/rtl433_mqtt.py https://raw.github.com/ltspicer/rtl433-mqtt-Gateway/main/rtl433_mqtt.py && sudo chmod +x /opt/rtl433-mqtt/rtl433_mqtt.py`
 
-oder das Skript nach `/opt/rtl433-mqtt/rtl433_mqtt.py` kopieren und ausführbar machen:
+**oder** das Skript nach `/opt/rtl433-mqtt/rtl433_mqtt.py` kopieren und ausführbar machen:
 
 `sudo chmod +x /opt/rtl433-mqtt/rtl433_mqtt.py`
 
