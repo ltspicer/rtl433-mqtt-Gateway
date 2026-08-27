@@ -89,7 +89,7 @@ oder das Skript nach `/opt/rtl433-mqtt/rtl433_mqtt.py` kopieren und ausführbar 
 
 ## 3. systemd konfigurieren
 
-`sudo nano /etc/systemd/system/rtl433-mqtt.service`
+Erstelle diese Datei mit `sudo nano /etc/systemd/system/rtl433-mqtt.service`
 
 ```
 [Unit]
