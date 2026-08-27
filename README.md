@@ -37,7 +37,7 @@ rtl_433 -V
 
 ---
 
-## 📂 2. Projekt-Struktur im LXC anlegen
+## 📂 2. Projekt-Struktur anlegen
 
 Erstelle das Anwendungsverzeichnis auf deinem (Debian) System:
 ```bash
@@ -61,7 +61,7 @@ rtl_433:
   debug: false                 # Schaltet Live-Terminal-Prints und das LOG-Level auf DEBUG
 
 mqtt:
-  host: "192.168.1.50"         # IP deines MQTT-Brokers / ioBroker
+  host: "192.168.1.50"         # IP deines MQTT-Brokers
   port: 1883
   base_topic: "weathersense/sdr"
   username: "dein_user"        # Leer lassen, falls keine Authentifizierung notwendig ist
@@ -76,7 +76,7 @@ Kopiere das Skript nach `/opt/rtl433-mqtt/rtl433_mqtt.py`. **Vergiss nicht, das 
 
 ### systemd konfigurieren
 
-`nano /etc/systemd/system/rtl433-mqtt.service`
+`sudo nano /etc/systemd/system/rtl433-mqtt.service`
 
 ```
 [Unit]
@@ -99,11 +99,15 @@ WantedBy=multi-user.target
 
 systemd starten:
 
-`systemctl daemon-reload`
-`systemctl enable rtl433-mqtt.service`
-`systemctl start rtl433-mqtt.service`
+```
+sudo systemctl daemon-reload
+sudo systemctl enable rtl433-mqtt.service
+sudo systemctl start rtl433-mqtt.service
+```
 
 Prüfen:
 
-`systemctl status rtl433-mqtt.service`
-`journalctl -u rtl433-mqtt.service -f`
+```
+systemctl status rtl433-mqtt.service
+journalctl -u rtl433-mqtt.service -f
+```
