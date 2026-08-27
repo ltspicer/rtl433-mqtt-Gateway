@@ -65,7 +65,7 @@ rtl_433:
 #    - "inFactory_TH"          # Beispiel für einen dritten Sensor
 #    - "Nexus-TH"              # Beispiel für einen vierten Sensor
   # ODER wenn du alles empfangen willst, schreibe einfach:
-  # model_filter: "ALL"
+# model_filter: "ALL"
   debug: false                 # Schaltet Live-Terminal-Prints und das LOG-Level auf DEBUG
 
 mqtt:
