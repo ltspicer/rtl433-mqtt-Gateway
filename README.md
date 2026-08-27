@@ -78,9 +78,14 @@ logging:
 ```
 
 ### Python-Skript: `/opt/rtl433-mqtt/rtl433_mqtt.py`
-Kopiere das Skript nach `/opt/rtl433-mqtt/rtl433_mqtt.py`.
 
-**Vergiss nicht, das Skript danach mit `sudo chmod +x /opt/rtl433-mqtt/rtl433_mqtt.py` ausführbar zu machen.**
+Du kannst mit diesem 1-Zeiler arbeiten:
+
+`sudo wget -O /opt/rtl433-mqtt/rtl433_mqtt.py https://raw.github.com/ltspicer/rtl433-mqtt-Gateway/main/rtl433_mqtt.py && sudo chmod +x /opt/rtl433-mqtt/rtl433_mqtt.py`
+
+oder das Skript nach `/opt/rtl433-mqtt/rtl433_mqtt.py` kopieren und ausführbar machen:
+
+`sudo chmod +x /opt/rtl433-mqtt/rtl433_mqtt.py`
 
 ## 3. systemd konfigurieren
 
