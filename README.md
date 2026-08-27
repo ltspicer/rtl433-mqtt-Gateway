@@ -50,7 +50,7 @@ Erstelle das Anwendungsverzeichnis auf deinem (Debian) System:
 sudo mkdir -p /opt/rtl433-mqtt
 ```
 
-### Konfigurationsdatei: `/opt/rtl433-mqtt/config.yaml`
+### Konfigurationsdatei erstellen:
 Erstelle die Konfiguration mit `sudo nano /opt/rtl433-mqtt/config.yaml`:
 
 ```yaml
@@ -77,9 +77,9 @@ logging:
   file: "/var/log/rtl433-mqtt.log"
 ```
 
-### Python-Skript: `/opt/rtl433-mqtt/rtl433_mqtt.py`
+### Python-Skript holen:
 
-Du kannst mit diesem 1-Zeiler arbeiten:
+Du kannst entweder mit diesem 1-Zeiler arbeiten:
 
 `sudo wget -O /opt/rtl433-mqtt/rtl433_mqtt.py https://raw.github.com/ltspicer/rtl433-mqtt-Gateway/main/rtl433_mqtt.py && sudo chmod +x /opt/rtl433-mqtt/rtl433_mqtt.py`
 
