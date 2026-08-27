@@ -10,7 +10,7 @@ https://de.aliexpress.com/item/1005005278623123.html
 
 ![Screenshot](https://github.com/ltspicer/rtl433-mqtt-Gateway/blob/main/sdr-stick.png)
 
-Meine Wetterstation ist von Ideoon (Pearl), welche nur mit der WeatherSense Cloud kommuniziert.
+Meine (Casativo) Wetterstation ist von Ideoon (Pearl), welche nur mit der WeatherSense Cloud kommuniziert.
 
 ![Screenshot](https://github.com/ltspicer/rtl433-mqtt-Gateway/blob/main/casativo_ideoon_weatherstation.png)
 
