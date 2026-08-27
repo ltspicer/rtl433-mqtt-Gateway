@@ -126,5 +126,5 @@ sudo systemctl start rtl433-mqtt.service
 
 ```
 systemctl status rtl433-mqtt.service
-journalctl -u rtl433-mqtt.service -f
+sudo journalctl -u rtl433-mqtt.service -f
 ```
