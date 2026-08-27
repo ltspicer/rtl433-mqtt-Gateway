@@ -2,6 +2,8 @@
 
 Dieses Projekt stellt eine ereignisgesteuerte Bridge bereit, die mithilfe eines SDR-Sticks und `rtl_433` die Funksignale von Wetterstationen (z. B. *Emax-W6*) abfängt. Die Daten werden in Celsius umgerechnet, lokale Statistiken für den Regenverlauf (Stunde, Tag, Gestern, Monat, Jahr) kalkuliert und die Werte sauber strukturiert per MQTT an einen Broker (zBsp. für den ioBroker `MQTT`-Adapter) übergeben.
 
+Bei mir läuft dieses Script in einem Proxmox LXC (Container).
+
 Ich selber habe einen "RTL2832U & R828D SDR USB2.0 TV-Stick-Tuner 25 MHz bis 1760 MHz" von https://de.aliexpress.com/item/1005005278623123.html
 
 ![Screenshot](https://github.com/ltspicer/rtl433-mqtt-Gateway/blob/main/sdr-stick.png)
