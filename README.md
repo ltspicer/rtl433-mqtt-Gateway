@@ -4,7 +4,7 @@ Dieses Projekt stellt eine ereignisgesteuerte Bridge bereit, die mithilfe eines 
 
 Bei mir läuft dieses Script in einem Proxmox LXC (Container) mit Debian.
 
-Ich selber habe einen "RTL2832U & R828D SDR USB2.0 TV-Stick-Tuner 25 MHz bis 1760 MHz" von https://de.aliexpress.com/item/1005005278623123.html
+Ich nutze einen "RTL2832U & R828D SDR USB2.0 TV-Stick-Tuner 25 MHz bis 1760 MHz" von https://de.aliexpress.com/item/1005005278623123.html
 
 ![Screenshot](https://github.com/ltspicer/rtl433-mqtt-Gateway/blob/main/sdr-stick.png)
 
