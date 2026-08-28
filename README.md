@@ -137,12 +137,24 @@ Environment=PYTHONUNBUFFERED=1
 WantedBy=multi-user.target
 ```
 
+Blacklist erstellen, damit der Kernel den SDR-Stick nicht für DVB einhängt.
+
+`sudo nano /etc/modprobe.d/blacklist-rtlsdr.conf`
+
+```bash
+blacklist dvb_usb_rtl28xxu
+blacklist rtl2832
+blacklist rtl820t
+```
+
 ### systemd starten:
 
 ```
 sudo systemctl daemon-reload
 sudo systemctl enable rtl433-mqtt.service
 sudo systemctl start rtl433-mqtt.service
+
+sudo reboot
 ```
 
 ### Prüfen:
