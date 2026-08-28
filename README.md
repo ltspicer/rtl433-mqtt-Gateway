@@ -137,7 +137,7 @@ Environment=PYTHONUNBUFFERED=1
 WantedBy=multi-user.target
 ```
 
-Blacklist erstellen, damit der Kernel den SDR-Stick nicht für DVB einhängt.
+Blacklist erstellen, damit der Kernel den SDR-Stick nicht für DVB beschlagnahmt.
 
 `sudo nano /etc/modprobe.d/blacklist-rtlsdr.conf`
 
@@ -147,7 +147,7 @@ blacklist rtl2832
 blacklist rtl820t
 ```
 
-### systemd starten:
+### Dienst starten:
 
 ```
 sudo systemctl daemon-reload
