@@ -163,6 +163,7 @@ WantedBy=multi-user.target
 EOF
 
 # Abfrage Konfiguration bearbeiten
+echo
 echo "**********************************************************************************"
 echo
 read -p "Edit Configuration Now? / Jetzt Konfiguration bearbeiten? [Y/n]: " CONF_ANSWER
