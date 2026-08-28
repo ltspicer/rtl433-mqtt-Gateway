@@ -16,7 +16,7 @@ Meine (Casativo) Wetterstation ist von Ideoon (Pearl), welche nur mit der Weathe
 
 ---
 
-### Für Debian basierte Systeme kann der Installer verwendet werden. Dieser übernimmt die folgenden Schritte 1. bis 3.
+### Für Debian basierte Systeme kann der Installer verwendet werden, welcher alles übernimmt (Schritte 1 bis 3).
 
 Lediglich `sudo ./install.sh` starten (vorher ausführbar machen) und den Anweisungen folgen ODER folgenden 1-Zeiler verwenden:
 
