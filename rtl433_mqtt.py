@@ -68,7 +68,7 @@ WIND_LABEL_INPUT = cfg.get("rtl_433", {}).get("wind_label_input", "wind_avg_km_h
 
 MQTT_HOST = cfg["mqtt"]["host"]
 MQTT_PORT = cfg["mqtt"]["port"]
-BASE_TOPIC = cfg.get("mqtt", {}).get("base_topic", "weathersense/sdr")
+BASE_TOPIC = cfg.get("mqtt", {}).get("base_topic", "weatherstation/sdr")
 DEBOUNCE = cfg.get("mqtt", {}).get("debounce", False)
 
 if MODEL_FILTER is None:

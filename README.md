@@ -16,6 +16,14 @@ Meine (Casativo) Wetterstation ist von Ideoon (Pearl), welche nur mit der Weathe
 
 ---
 
+Für Debian basierte Systeme kann der Installer verwendet werden.
+
+Lediglich `sudo ./install.sh` starten (vorher ausführbar machen) und den Anweisungen folgen ODER folgenden 1-Zeiler verwenden:
+
+`sudo wget https://raw.github.com/ltspicer/rtl433-mqtt-Gateway/main/install.sh && chmod +x install.sh`
+
+---
+
 ## 1. rtl_433 aus den Quellen kompilieren
 
 Um die neuesten Sensoren zu unterstützen, sollte `rtl_433` direkt aus dem offiziellen GitHub-Repository kompiliert werden.
@@ -76,7 +84,7 @@ rtl_433:
 mqtt:
   host: "192.168.1.50"               # IP deines MQTT-Brokers
   port: 1883                         # MQTT-Port
-  base_topic: "weathersense/sdr"     # MQTT-Topic
+  base_topic: "weatherstation/sdr"     # MQTT-Topic
   username: "dein_user"              # Leer lassen, falls keine Authentifizierung notwendig ist
   password: "dein_password"          # Leer lassen, falls keine Authentifizierung notwendig ist
   debounce: false                    # Bei true werden nur geänderte Daten gesendet
@@ -103,7 +111,7 @@ Erstelle diese Datei mit `sudo nano /etc/systemd/system/rtl433-mqtt.service`
 
 ```
 [Unit]
-Description=rtl_433 SDR to MQTT Gateway (WeatherSense)
+Description=rtl_433 SDR to MQTT Gateway
 After=network-online.target
 Wants=network-online.target
 
