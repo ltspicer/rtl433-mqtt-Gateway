@@ -3,7 +3,7 @@
 #######################################################
 #      Send 433MHz weather sensors data via MQTT
 #                rtl433-mqtt Gateway
-#                   V2.0 (C) 2026
+#                   V2.1 (C) 2026
 #                  Daniel Luginbühl
 #######################################################
 
@@ -16,8 +16,10 @@ import os
 import re
 import time
 
-CONFIG_FILE = "/opt/rtl433-mqtt/config.yaml"
-STATE_FILE = "/opt/rtl433-mqtt/weather_states.json"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+CONFIG_FILE = os.path.join(SCRIPT_DIR, "config.yaml")
+STATE_FILE = os.path.join(SCRIPT_DIR, "weather_states.json")
 
 # 1. Konfiguration laden
 try:
