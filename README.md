@@ -20,7 +20,7 @@ Für Debian basierte Systeme kann der Installer verwendet werden.
 
 Lediglich `sudo ./install.sh` starten (vorher ausführbar machen) und den Anweisungen folgen ODER folgenden 1-Zeiler verwenden:
 
-`sudo wget https://raw.github.com/ltspicer/rtl433-mqtt-Gateway/main/install.sh && chmod +x install.sh`
+`wget https://raw.github.com/ltspicer/rtl433-mqtt-Gateway/main/install.sh && chmod +x install.sh && sudo ./install.sh`
 
 ---
 
