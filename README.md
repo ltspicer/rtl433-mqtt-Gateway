@@ -53,7 +53,7 @@ sudo mkdir -p /opt/rtl433-mqtt
 ```
 
 ### Konfigurationsdatei erstellen:
-Erstelle die Konfiguration mit `sudo nano /opt/rtl433-mqtt/config.yaml`:
+Erstelle die Konfiguration mit `sudo nano /opt/rtl433-mqtt/config.yaml` **(Achtung: Muss im gleichen Ordner wie das Python Script sein)**:
 
 ```yaml
 rtl_433:
@@ -85,13 +85,13 @@ logging:
   file: "/var/log/rtl433-mqtt.log"
 ```
 
-### Python-Skript holen:
+### Python-Script holen:
 
 Du kannst entweder mit diesem **1-Zeiler** arbeiten:
 
 `sudo wget -O /opt/rtl433-mqtt/rtl433_mqtt.py https://raw.github.com/ltspicer/rtl433-mqtt-Gateway/main/rtl433_mqtt.py && sudo chmod +x /opt/rtl433-mqtt/rtl433_mqtt.py`
 
-**oder** das Skript nach `/opt/rtl433-mqtt/rtl433_mqtt.py` kopieren und ausführbar machen:
+**oder** das Script nach `/opt/rtl433-mqtt/rtl433_mqtt.py` kopieren und ausführbar machen:
 
 `sudo chmod +x /opt/rtl433-mqtt/rtl433_mqtt.py`
 
