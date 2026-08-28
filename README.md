@@ -22,7 +22,7 @@ Folgenden 1-Zeiler verwenden und den Anweisungen folgen:
 
 `wget https://raw.github.com/ltspicer/rtl433-mqtt-Gateway/main/install.sh && chmod +x install.sh && sudo ./install.sh`
 
-ODER manuell:
+ODER manuell starten:
 
 ```bash
 chmod +x install.sh
