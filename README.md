@@ -29,7 +29,7 @@ chmod +x install.sh
 sudo ./install.sh
 ```
 
-Anschliessen die **Konfiguration bearbeiten** mit `sudo nano /opt/rtl433-mqtt/config.yaml`
+Anschliessend die **Konfiguration bearbeiten** mit `sudo nano /opt/rtl433-mqtt/config.yaml`
 
 ---
 
