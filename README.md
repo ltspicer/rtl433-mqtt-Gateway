@@ -40,7 +40,7 @@ Um die neuesten Sensoren zu unterstützen, sollte `rtl_433` direkt aus dem offiz
 ```bash
 # 1. Abhängigkeiten installieren
 sudo apt update
-sudo apt install libtool libusb-1.0-0-dev librtlsdr-dev cmake pkg-config build-essential git -y
+apt install -y libtool libusb-1.0-0-dev librtlsdr-dev cmake pkg-config build-essential git python3-pip python3-yaml python3-paho-mqtt wget
 
 # 2. Quellcode holen und bauen
 git clone https://github.com/merbanan/rtl_433
