@@ -180,6 +180,9 @@ echo
 echo "systemctl status rtl433-mqtt.service"
 echo "sudo journalctl -u rtl433-mqtt.service -f"
 echo
+echo "Now edit the configuration with: / Editiere jetzt die Konfiguration mit:"
+echo "sudo nano $TARGET_PATH/config.yaml"
+echo
 echo "Log path / Log Pfad: $LOG_PATH"
 echo
 echo "**********************************************************************************"
