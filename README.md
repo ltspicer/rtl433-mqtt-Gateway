@@ -18,9 +18,16 @@ Meine (Casativo) Wetterstation ist von Ideoon (Pearl), welche nur mit der Weathe
 
 ### Für Debian basierte Systeme kann der Installer verwendet werden, welcher alles übernimmt (Schritte 1 bis 3).
 
-Lediglich `sudo ./install.sh` starten (vorher ausführbar machen) und den Anweisungen folgen ODER folgenden 1-Zeiler verwenden:
+Folgenden 1-Zeiler verwenden und den Anweisungen folgen:
 
 `wget https://raw.github.com/ltspicer/rtl433-mqtt-Gateway/main/install.sh && chmod +x install.sh && sudo ./install.sh`
+
+ODER manuell:
+
+```bash
+chmod +x install.sh
+sudo ./install.sh
+```
 
 ---
 
