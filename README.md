@@ -58,22 +58,28 @@ Erstelle die Konfiguration mit `sudo nano /opt/rtl433-mqtt/config.yaml`:
 ```yaml
 rtl_433:
   frequency: "434M"
+
   # Entweder eine Liste von Modellen:
   model_filter:
     - "Emax-W6"
-#    - "LaCrosse-TX141THBv2"   # Beispiel für einen zweiten Sensor
-#    - "inFactory_TH"          # Beispiel für einen dritten Sensor
-#    - "Nexus-TH"              # Beispiel für einen vierten Sensor
-  # ODER wenn du alles empfangen willst, schreibe einfach:
-# model_filter: "ALL"
-  debug: false                 # Schaltet Live-Terminal-Prints und das LOG-Level auf DEBUG
+#    - "LaCrosse-TX141THBv2"         # Beispiel für einen zweiten Sensor
+#    - "inFactory_TH"                # Beispiel für einen dritten Sensor
+#    - "Nexus-TH"                    # Beispiel für einen vierten Sensor
+  # ODER wenn du alles empfangen willst, lass "model_filter:" einfach weg.
+
+  temp_label_f: "temperature_F"      # Temperaturname für Farenheid, wonach in den Rohdaten gesucht wird
+  temp_label_c: "temperature_C"      # Temperaturpräfix für Celsius, wie der berechnete Wert im Broker heissen soll
+  rain_label_input: "rain_mm"        # Wonach in den Rohdaten gesucht wird
+  wind_label_input: "wind_avg_km_h"  # Wonach in den Rohdaten gesucht wird
+  debug: false                       # Schaltet Live-Terminal-Prints und das LOG-Level auf DEBUG
 
 mqtt:
-  host: "192.168.1.50"         # IP deines MQTT-Brokers
+  host: "192.168.1.50"               # IP deines MQTT-Brokers
   port: 1883
   base_topic: "weathersense/sdr"
-  username: "dein_user"        # Leer lassen, falls keine Authentifizierung notwendig ist
-  password: "dein_password"    # Leer lassen, falls keine Authentifizierung notwendig ist
+  username: "dein_user"              # Leer lassen, falls keine Authentifizierung notwendig ist
+  password: "dein_password"          # Leer lassen, falls keine Authentifizierung notwendig ist
+  debounce: false                    # Bei true werden nur geänderte Daten gesendet
 
 logging:
   file: "/var/log/rtl433-mqtt.log"

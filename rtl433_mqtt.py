@@ -3,7 +3,7 @@
 #######################################################
 #      Send 433MHz weather sensors data via MQTT
 #                rtl433-mqtt Gateway
-#                   V1.0 (C) 2026
+#                   V2.0 (C) 2026
 #                  Daniel Luginbühl
 #######################################################
 
@@ -17,7 +17,7 @@ import re
 import time
 
 CONFIG_FILE = "/opt/rtl433-mqtt/config.yaml"
-STATE_FILE = "/opt/rtl433-mqtt/rain_state.json"
+STATE_FILE = "/opt/rtl433-mqtt/weather_states.json"
 
 # 1. Konfiguration laden
 try:
@@ -57,12 +57,20 @@ if DEBUG_MODE:
 last_mtime = os.path.getmtime(CONFIG_FILE)
 
 # Variablen zuweisen
-FREQ = cfg["rtl_433"]["frequency"]
-MODEL_FILTER = cfg["rtl_433"]["model_filter"]
+FREQ = cfg.get("rtl_433", {}).get("frequency", "434M")
+MODEL_FILTER = cfg.get("rtl_433", {}).get("model_filter", "ALL")
+TEMP_LABEL_F = cfg["rtl_433"].get("temp_label_f", "temperature_F")
+TEMP_LABEL_C = cfg["rtl_433"].get("temp_label_c", "temperature_C")
+RAIN_LABEL_INPUT = cfg["rtl_433"].get("rain_label_input", "rain_mm")
+WIND_LABEL_INPUT = cfg.get("rtl_433", {}).get("wind_label_input", "wind_avg_km_h")
 
 MQTT_HOST = cfg["mqtt"]["host"]
 MQTT_PORT = cfg["mqtt"]["port"]
-BASE_TOPIC = cfg["mqtt"]["base_topic"]
+BASE_TOPIC = cfg.get("mqtt", {}).get("base_topic", "weathersense/sdr")
+DEBOUNCE = cfg.get("mqtt", {}).get("debounce", False)
+
+if MODEL_FILTER is None:
+    MODEL_FILTER = "ALL"
 
 # 1. MQTT Client aufbauen
 mqttc = mqtt.Client(client_id="rtl433_sdr_bridge", clean_session=True)
@@ -83,7 +91,7 @@ except Exception as e:
     exit(1)
 
 # 2. Funktionen für die zusätzlichen Regenwerte
-def load_rain_state():
+def load_weather_states():
     if os.path.exists(STATE_FILE):
         try:
             with open(STATE_FILE, "r") as f:
@@ -92,15 +100,19 @@ def load_rain_state():
             logging.error(f"Fehler beim Laden der Regenstopps: {e}")
     return {}
 
-def save_rain_state(state):
+def save_weather_states(state):
     try:
         with open(STATE_FILE, "w") as f:
             json.dump(state, f, indent=4)
     except Exception as e:
         logging.error(f"Fehler beim Speichern der Regenstopps: {e}")
 
-def calculate_rain_stats(sensor_id, current_total_rain, current_time_str):
-    state = load_rain_state()
+def calculate_weather_stats(sensor_id, current_total_rain, current_wind):
+    """
+    Berechnet alle Regen- und Windstatistiken in einem einzigen Rutsch,
+    um doppelte Schlüssel im JSON-Zustand zuverlässig zu verhindern.
+    """
+    state = load_weather_states()  # Datei laden
     now = time.time()
     ltime = time.localtime(now)
     
@@ -109,97 +121,118 @@ def calculate_rain_stats(sensor_id, current_total_rain, current_time_str):
     current_month_str = time.strftime("%Y-%m", ltime)
     current_year_str = time.strftime("%Y", ltime)
     
-    # Zustand initialisieren, falls der Sensor neu ist
-    if sensor_id not in state:
-        state[sensor_id] = {
-            "last_total": current_total_rain,
-            "last_ts": now,
-            "hour_key": current_hour_str,
-            "hour_start_total": current_total_rain,
-            "day_key": current_day_str,
-            "day_start_total": current_total_rain,
-            "month_key": current_month_str,
-            "month_start_total": current_total_rain,
-            "year_key": current_year_str,
-            "year_start_total": current_total_rain,
-            "currRainfall": 0.0,
-            "hourRainfall": 0.0,
-            "dayRainfall": 0.0,
-            "monthRainfall": 0.0,
-            "yearRainfall": 0.0,
-            "yestRainfall": 0.0
+    # 1. ID-Block sauber als EINZIGES Objekt initialisieren, falls neu
+    if sensor_id not in state or not isinstance(state[sensor_id], dict):
+        state[sensor_id] = {}
+
+    # 2. REGEN-STRUKTUR INITIALISIEREN ODER LADEN
+    if "rain_stats" not in state[sensor_id]:
+        state[sensor_id]["rain_stats"] = {
+            "last_total": current_total_rain, "last_ts": now,
+            "hour_key": current_hour_str, "hour_start_total": current_total_rain,
+            "day_key": current_day_str, "day_start_total": current_total_rain,
+            "month_key": current_month_str, "month_start_total": current_total_rain,
+            "year_key": current_year_str, "year_start_total": current_total_rain,
+            "currRainfall": 0.0, "hourRainfall": 0.0, "dayRainfall": 0.0,
+            "monthRainfall": 0.0, "yearRainfall": 0.0, "yestRainfall": 0.0
         }
+    r_state = state[sensor_id]["rain_stats"]
 
-    s_state = state[sensor_id]
+    # 3. WIND-STRUKTUR INITIALISIEREN ODER LADEN
+    if "wind_stats" not in state[sensor_id]:
+        state[sensor_id]["wind_stats"] = {
+            "hour_key": current_hour_str, "hourMax": current_wind,
+            "day_key": current_day_str, "dayMax": current_wind,
+            "month_key": current_month_str, "monthMax": current_wind,
+            "year_key": current_year_str, "yearMax": current_wind
+        }
+    w_state = state[sensor_id]["wind_stats"]
 
-    # 1. Schutz vor Sensor-Reset (z.B. Batteriewechsel)
-    if current_total_rain < s_state["last_total"]:
-        logging.warning(f"Sensor-Reset erkannt für ID {sensor_id}")
-        diff_offset = s_state["last_total"] - current_total_rain
-        s_state["hour_start_total"] = max(0.0, s_state["hour_start_total"] - diff_offset)
-        s_state["day_start_total"] = max(0.0, s_state["day_start_total"] - diff_offset)
-        s_state["month_start_total"] = max(0.0, s_state["month_start_total"] - diff_offset)
-        s_state["year_start_total"] = max(0.0, s_state["year_start_total"] - diff_offset)
+    # --- REGEN-BERECHNUNG ---
+    if current_total_rain < r_state["last_total"]:
+        diff_offset = r_state["last_total"] - current_total_rain
+        r_state["hour_start_total"] = max(0.0, r_state["hour_start_total"] - diff_offset)
+        r_state["day_start_total"] = max(0.0, r_state["day_start_total"] - diff_offset)
+        r_state["month_start_total"] = max(0.0, r_state["month_start_total"] - diff_offset)
+        r_state["year_start_total"] = max(0.0, r_state["year_start_total"] - diff_offset)
 
-    # 2. Zeitliche Wechsel prüfen (Stunde, Tag, Monat, Jahr)
-    if current_hour_str != s_state["hour_key"]:
-        s_state["hour_key"] = current_hour_str
-        s_state["hour_start_total"] = current_total_rain
+    if current_hour_str != r_state["hour_key"]:
+        r_state["hour_key"] = current_hour_str
+        r_state["hour_start_total"] = current_total_rain
+    if current_day_str != r_state["day_key"]:
+        r_state["yestRainfall"] = r_state["dayRainfall"]
+        r_state["day_key"] = current_day_str
+        r_state["day_start_total"] = current_total_rain
+    if current_month_str != r_state["month_key"]:
+        r_state["month_key"] = current_month_str
+        r_state["month_start_total"] = current_total_rain
+    if current_year_str != r_state["year_key"]:
+        r_state["year_key"] = current_year_str
+        r_state["year_start_total"] = current_total_rain
 
-    if current_day_str != s_state["day_key"]:
-        # Bevor der Tag überschrieben wird, wandert der Tagessatz zu "Gestern"
-        s_state["yestRainfall"] = s_state["dayRainfall"]
-        s_state["day_key"] = current_day_str
-        s_state["day_start_total"] = current_total_rain
+    r_state["hourRainfall"] = round(current_total_rain - r_state["hour_start_total"], 2)
+    r_state["dayRainfall"] = round(current_total_rain - r_state["day_start_total"], 2)
+    r_state["monthRainfall"] = round(current_total_rain - r_state["month_start_total"], 2)
+    r_state["yearRainfall"] = round(current_total_rain - r_state["year_start_total"], 2)
 
-    if current_month_str != s_state["month_key"]:
-        s_state["month_key"] = current_month_str
-        s_state["month_start_total"] = current_total_rain
+    time_diff = now - r_state["last_ts"]
+    rain_diff = current_total_rain - r_state["last_total"]
 
-    if current_year_str != s_state["year_key"]:
-        s_state["year_key"] = current_year_str
-        s_state["year_start_total"] = current_total_rain
+    if time_diff > 5:
+        if rain_diff > 0:
+            # 1. Es gab einen neuen Regen-Impuls -> Aktuelle Intensität berechnen
+            new_intensity = (rain_diff / time_diff) * 3600.0
+            
+            # Alter Wert dämpfen (80% alter Wert, 20% neuer Peak)
+            # Extremes Hochschnellen bei einem einzelnen Wippenschlag verhindern
+            if r_state.get("currRainfall", 0.0) > 0:
+                r_state["currRainfall"] = round((r_state["currRainfall"] * 0.8) + (new_intensity * 0.2), 2)
+            else:
+                r_state["currRainfall"] = round(new_intensity, 2)
+        else:
+            # 2. Kein neuer Impuls in diesem Paket (rain_diff == 0)
+            # Wert langsam abklingen lassen
+            old_intensity = r_state.get("currRainfall", 0.0)
+            if old_intensity > 0.5:
+                r_state["currRainfall"] = round(old_intensity * 0.7, 2)
+            else:
+                r_state["currRainfall"] = 0.0
 
-    # 3. Berechnungen durchführen
-    
-    # Kaskadierende Differenzen
-    hour_rain = round(current_total_rain - s_state["hour_start_total"], 2)
-    day_rain = round(current_total_rain - s_state["day_start_total"], 2)
-    month_rain = round(current_total_rain - s_state["month_start_total"], 2)
-    year_rain = round(current_total_rain - s_state["year_start_total"], 2)
+    r_state["last_total"] = current_total_rain
+    r_state["last_ts"] = now
 
-    # Aktuelle Regenintensität (currRainfall) in mm/h hochrechnen
-    time_diff = now - s_state["last_ts"]
-    rain_diff = current_total_rain - s_state["last_total"]
-    
-    # Nur berechnen, wenn Zeit vergangen ist und der Wert plausibel stieg
-    if time_diff > 5 and rain_diff >= 0:
-        # Formel: (Regendifferenz / Sekunden) * 3600 Sekunden = mm/h
-        calculated_intensity = (rain_diff / time_diff) * 3600.0
-        # Sanftes Abklingen oder direkter Wert
-        s_state["currRainfall"] = round(calculated_intensity, 2)
-    elif rain_diff == 0 and time_diff > 120:
-        # Wenn seit über 2 Minuten kein neuer Regenimpuls kam, steht der Regen still
-        s_state["currRainfall"] = 0.0
+    # --- WIND-BERECHNUNG ---
+    if current_hour_str != w_state["hour_key"]:
+        w_state["hour_key"] = current_hour_str
+        w_state["hourMax"] = current_wind
+    if current_day_str != w_state["day_key"]:
+        w_state["day_key"] = current_day_str
+        w_state["dayMax"] = current_wind
+    if current_month_str != w_state["month_key"]:
+        w_state["month_key"] = current_month_str
+        w_state["monthMax"] = current_wind
+    if current_year_str != w_state["year_key"]:
+        w_state["year_key"] = current_year_str
+        w_state["yearMax"] = current_wind
 
-    # Werte im Zustand sichern
-    s_state["last_total"] = current_total_rain
-    s_state["last_ts"] = now
-    s_state["hourRainfall"] = hour_rain
-    s_state["dayRainfall"] = day_rain
-    s_state["monthRainfall"] = month_rain
-    s_state["yearRainfall"] = year_rain
+    w_state["hourMax"] = max(w_state["hourMax"], current_wind)
+    w_state["dayMax"] = max(w_state["dayMax"], current_wind)
+    w_state["monthMax"] = max(w_state["monthMax"], current_wind)
+    w_state["yearMax"] = max(w_state["yearMax"], current_wind)
 
-    save_rain_state(state)
+    # --- SPEICHERN ---
+    state[sensor_id]["rain_stats"] = r_state
+    state[sensor_id]["wind_stats"] = w_state
+    save_weather_states(state)
 
-    # Rückgabe aller 6 Werte als Dictionary
+    # Alle berechneten Werte zurückliefern
     return {
-        "currRainfall": s_state["currRainfall"],
-        "hourRainfall": s_state["hourRainfall"],
-        "dayRainfall": s_state["dayRainfall"],
-        "yestRainfall": s_state["yestRainfall"],
-        "monthRainfall": s_state["monthRainfall"],
-        "yearRainfall": s_state["yearRainfall"]
+        "currRainfall": r_state["currRainfall"], "hourRainfall": r_state["hourRainfall"],
+        "dayRainfall": r_state["dayRainfall"], "yestRainfall": r_state["yestRainfall"],
+        "monthRainfall": r_state["monthRainfall"], "yearRainfall": r_state["yearRainfall"],
+        "currWindSpeed": round(current_wind, 1), "hourWindSpeed": round(w_state["hourMax"], 1),
+        "dayWindSpeed": round(w_state["dayMax"], 1), "monthWindSpeed": round(w_state["monthMax"], 1),
+        "yearWindSpeed": round(w_state["yearMax"], 1)
     }
 
 # 3. Sanitize Funktion
@@ -246,25 +279,27 @@ for line in proc.stdout:
     if not current_model:
         continue
 
-    # Filterprüfung: Entweder der Filter steht auf "ALL" oder das Modell ist in unserer Liste
+    # Filterprüfung: Entweder der Filter steht auf "ALL" oder das Modell ist in der Liste
     is_allowed = False
     if MODEL_FILTER == "ALL":
         is_allowed = True
-    elif isinstance(MODEL_FILTER, list) and current_model in MODEL_FILTER:
-        is_allowed = True
-    elif isinstance(MODEL_FILTER, str) and current_model == MODEL_FILTER:
-        is_allowed = True
+    elif isinstance(MODEL_FILTER, list):
+        if current_model in MODEL_FILTER:
+            is_allowed = True
+    elif isinstance(MODEL_FILTER, str):
+        if current_model == MODEL_FILTER:
+            is_allowed = True
     else:
         logging.warning(f"Ungültiges Format für model_filter in config.yaml. Paket für {current_model} wird ignoriert.")
 
     if is_allowed:
         sensor_id = data.get("id", "unknown")
-        
         if DEBUG_MODE:
             print(f"\n{get_now_ms()} [+] Sensor gefunden ({current_model} ID: {sensor_id}):")
-
-        extra_rain_data = {}
         
+        extra_weather_data = {}
+        
+        # 1. Originale Sensorwerte senden
         for key, value in data.items():
             if key in ["model", "id", "mic"]:
                 continue
@@ -272,43 +307,83 @@ for line in proc.stdout:
             key_clean = sanitize(key)
             topic = f"{BASE_TOPIC}/{sanitize(current_model)}/{sensor_id}/{key_clean}"
 
-#            # DeBounce Logik
-#            if key_clean != "time":
-#                if topic in last_values and last_values[topic] == value:
-#                    continue
-#                last_values[topic] = value
+            if DEBOUNCE:
+                # DeBounce Logik
+                if DEBUG_MODE:
+                    logging.info("DeBounce aktiv")
+                if key_clean != "time":
+                    if topic in last_values and last_values[topic] == value:
+                        if DEBUG_MODE:
+                            logging.info(f"DeBounce: Topic {topic} überspringen")
+                        continue
+                    last_values[topic] = value
 
-            # Senden an Broker (ohne DeBounce - immer senden!)
             mqttc.publish(topic, str(value), retain=True)
             
             if DEBUG_MODE:
                 print(f"    -> MQTT Publish: {topic} = {value}")
 
-            # Sobald die Schleife das Feld "rain_mm" verarbeitet, triggern wir die 6 Berechnungen
-            if key_clean == "rain_mm":
-                try:
-                    current_total_rain = float(value)
-                    # Funktion aufrufen und das extra_rain_data-Wörterbuch mit den 6 neuen Werten befüllen
-                    rain_stats = calculate_rain_stats(sensor_id, current_total_rain, data.get("time", ""))
-                    extra_rain_data.update(rain_stats)
-                except ValueError:
-                    pass
-
-            # Trigger für die Celsius-Umrechnung (unabhängig von Groß-/Kleinschreibung)
-            if key_clean.lower() == "temperature_f":
+            # Celsius-Umrechnung
+            if key_clean.lower() == TEMP_LABEL_F.lower():
                 try:
                     temp_f = float(value)
-                    # Umrechnung in Celsius und auf 1 Nachkommastelle runden
-                    temp_c = round((temp_f - 32) * 5 / 9, 1)
-                    extra_rain_data["temperature_C"] = temp_c
+                    extra_weather_data[TEMP_LABEL_C] = round((temp_f - 32) * 5 / 9, 1)
                 except ValueError:
                     pass
-            
-        # Nachdem alle Standard-Werte gesendet wurden, feuern wir die 6 berechneten Werte ab
-        for r_key, r_value in extra_rain_data.items():
-            r_topic = f"{BASE_TOPIC}/{sanitize(current_model)}/{sensor_id}/{r_key}"
-            mqttc.publish(r_topic, str(r_value), retain=True)
-            if DEBUG_MODE:
-                print(f"    -> MQTT Publish (Calculated): {r_topic} = {r_value}")
 
-        logging.info(f"Published data packet for {current_model} ID {sensor_id}")
+        # Werte für Regen/Wind prüfen
+        raw_rain = data.get(RAIN_LABEL_INPUT)
+        raw_wind = data.get(WIND_LABEL_INPUT)
+
+        # Bestehenden Zustand laden
+        state_file_data = load_weather_states().get(str(sensor_id), {})
+
+        # Fallback auf alte Werte aus der JSON, falls das aktuelle Paket das Feld NICHT enthält
+        if raw_rain is None:
+            raw_rain = state_file_data.get("rain_stats", {}).get("last_total", 0.0)
+        if raw_wind is None:
+            raw_wind = state_file_data.get("wind_stats", {}).get("hourMax", 0.0)
+
+        # 2. Regen- und Wind-Rohwerte für die Statistik holen
+        # Wenn ein Wert im Funkspruch fehlt, dann letzten Stand aus der JSON als Fallback
+        state_file_data = load_weather_states().get(str(sensor_id), {})
+        
+        raw_rain = data.get(RAIN_LABEL_INPUT)
+        if raw_rain is None:
+            raw_rain = state_file_data.get("rain_stats", {}).get("last_total", 0.0)
+            
+        raw_wind = data.get(WIND_LABEL_INPUT)
+        if raw_wind is None:
+            raw_wind = state_file_data.get("wind_stats", {}).get("hourMax", 0.0) # Oder 0.0 als Fallback
+
+        # 3. Berechnen wenn das Paket REGEN oder WIND enthält
+        if RAIN_LABEL_INPUT in data or WIND_LABEL_INPUT in data:
+            try:
+                stats = calculate_weather_stats(str(sensor_id), float(raw_rain), float(raw_wind))
+                extra_weather_data.update(stats)
+            except Exception as e:
+                logging.error(f"Fehler bei der Wetterstatistik-Berechnung: {e}")
+        else:
+            # Reines Temperatur-Paket -> alte berechnete Werte mitsenden für neuen Zeitstempel
+            if "rain_stats" in state_file_data:
+                extra_weather_data.update(state_file_data["rain_stats"])
+            if "wind_stats" in state_file_data:
+                w_old = state_file_data["wind_stats"]
+                extra_weather_data.update({
+                    "currWindSpeed": round(float(raw_wind), 1),
+                    "hourWindSpeed": round(w_old.get("hourMax", 0.0), 1),
+                    "dayWindSpeed": round(w_old.get("dayMax", 0.0), 1),
+                    "monthWindSpeed": round(w_old.get("monthMax", 0.0), 1),
+                    "yearWindSpeed": round(w_old.get("yearMax", 0.0), 1)
+                })
+
+        # 4. Alle berechneten Werte (Regen, Wind, Celsius) auf einmal senden
+        for w_key, w_value in extra_weather_data.items():
+            w_topic = f"{BASE_TOPIC}/{sanitize(current_model)}/{sensor_id}/{w_key}"
+            mqttc.publish(w_topic, str(w_value), retain=True)
+            if DEBUG_MODE:
+                print(f"    -> MQTT Publish (Calculated): {w_topic} = {w_value} ({get_now_ms()})")
+
+        if DEBUG_MODE:
+            logging.info(f"Published data packet for {current_model} ID {sensor_id}")
+
