@@ -84,7 +84,7 @@ rtl_433:
 #    - "Nexus-TH"                    # Beispiel für einen vierten Sensor
   # ODER wenn du alles empfangen willst, lass "model_filter:" einfach weg.
 
-  temp_label_f: "temperature_F"      # Temperaturname für Farenheid, wonach in den Rohdaten gesucht wird
+  temp_label_f: "temperature_F"      # Temperaturname für Fahrenheit, wonach in den Rohdaten gesucht wird
   temp_label_c: "temperature_C"      # Temperaturpräfix für Celsius, wie der berechnete Wert im Broker heissen soll
   rain_label_input: "rain_mm"        # Wonach in den Rohdaten gesucht wird
   wind_label_input: "wind_avg_km_h"  # Wonach in den Rohdaten gesucht wird
