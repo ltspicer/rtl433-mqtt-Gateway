@@ -3,7 +3,7 @@
 echo ""
 echo "#################################"
 echo "#      rtl433-mqtt Gateway      #"
-echo "#      Install Script V1.0      #"
+echo "#      Install Script V1.1      #"
 echo "#      for Debian based OS      #"
 echo "#      by Daniel Luginbuehl     #"
 echo "#   webmaster@ltspiceusers.ch   #"
@@ -162,7 +162,20 @@ Environment=PYTHONUNBUFFERED=1
 WantedBy=multi-user.target
 EOF
 
+# Abfrage Konfiguration bearbeiten
+echo "**********************************************************************************"
+echo
+read -p "Edit Configuration Now? / Jetzt Konfiguration bearbeiten? [Y/n]: " CONF_ANSWER
+
+# Ist die Antwort "n"?
+if [[ "$CONF_ANSWER" =~ ^[Nn]$ ]]; then
+    echo "No configuration changes. / Keine Bearbeitung der Konfiguration."
+else
+    nano "$TARGET_PATH/config.yaml"
+fi
+
 # Systemd neu laden und Dienst aktivieren/starten
+echo
 echo "Enable and start the rtl433-mqtt service..."
 echo "Aktiviere und starte den rtl433-mqtt Dienst..."
 systemctl daemon-reload
@@ -177,10 +190,10 @@ echo
 echo "You can check whether the script is running. To do so, use the following commands:"
 echo "Du kannst prüfen, ob das Script läuft. Benutze dazu folgende Befehle:"
 echo
-echo "systemctl status rtl433-mqtt.service"
+echo "sudo systemctl status rtl433-mqtt.service"
 echo "sudo journalctl -u rtl433-mqtt.service -f"
 echo
-echo "Now edit the configuration with: / Editiere jetzt die Konfiguration mit:"
+echo "To edit the configuration: / Um die Konfiguration zu editieren:"
 echo "sudo nano $TARGET_PATH/config.yaml"
 echo
 echo "Log path / Log Pfad: $LOG_PATH"
