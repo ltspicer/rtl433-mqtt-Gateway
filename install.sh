@@ -3,7 +3,7 @@
 echo
 echo "#################################"
 echo "#      rtl433-mqtt Gateway      #"
-echo "#      Install Script V1.1      #"
+echo "#      Install Script V1.2      #"
 echo "#      for Debian based OS      #"
 echo "#      by Daniel Luginbuehl     #"
 echo "#   webmaster@ltspiceusers.ch   #"
@@ -37,12 +37,56 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
-echo "Plug in the SDR stick now!"
-echo "SDR-Stick jetzt einstecken!"
-echo
+while true; do
+    echo
+    echo "=================================================================================="
+    echo "Plug in the SDR stick now! / SDR-Stick jetzt einstecken!"
+    echo "=================================================================================="
+    echo
+    read -p "Press ENTER when the stick is plugged in / Drücke ENTER, wenn der Stick eingesteckt ist..."
+    echo
+    echo "Listing USB devices... / Liste USB-Geräte auf..."
+    echo "----------------------------------------------------------------------------------"
+    
+    # lsusb ausgeben
+    lsusb
+    
+    echo "----------------------------------------------------------------------------------"
+    echo
+    read -p "Is your SDR stick listed above? / Ist dein SDR-Stick oben aufgelistet? [y/N]: " STICK_DETECTED
+
+    # Wenn Antwort "y", Schleife abbrechen
+    if [[ "$STICK_DETECTED" =~ ^[Yy]$ ]]; then
+        echo "Great! Hardware detected. Proceeding... / Super! Hardware erkannt. Es geht weiter..."
+        break
+    else
+        # Support-Informationen anzeigen
+        echo
+        echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        echo "SUPPORT INFO / HILFE ZUR FEHLERSUCHE:"
+        echo "1. Check if the stick is firmly pushed into the USB port."
+        echo "   Prüfe, ob der Stick richtig fest im USB-Anschluss steckt."
+        echo "2. If using a Raspberry Pi 4/5, try a USB 2.0 port (black) instead of USB 3.0 (blue)."
+        echo "   Falls du einen Raspberry Pi 4/5 nutzt, versuche einen USB 2.0 Port (schwarz)."
+        echo "3. Often, the stick is listed as 'Realtek Semiconductor Corp. RTL2838 DVB-T'."
+        echo "   Oft wird der Stick als 'Realtek Semiconductor Corp. RTL2838 DVB-T' angezeigt."
+        echo "4. Try another USB port if it still doesn't show up."
+        echo "   Versuche einen anderen USB-Port, falls er gar nicht auftaucht."
+        echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        echo
+        
+        read -p "Try again? / Erneut versuchen? [Y/n]: " TRY_AGAIN
+        # Wenn "n", Script abbrechen
+        if [[ "$TRY_AGAIN" =~ ^[Nn]$ ]]; then
+            echo "Installation aborted by user. / Installation durch Benutzer abgebrochen."
+            exit 1
+        fi
+    fi
+done
 
 # Benutzer fragen
 while true; do
+    echo
     echo "Please enter the installation path. Default: $DEFAULT_PATH"
     echo "Bitte Installationspfad eingeben. Standard: $DEFAULT_PATH"
     echo
