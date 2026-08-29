@@ -92,7 +92,8 @@ while true; do
     echo
     echo "CTRL & C = Cancel / Abbruch"
     echo "Enter path or press ENTER for default:"
-    read -p "Gib den Pfad ein oder drücke ENTER für Standard:" USER_INPUT
+    echo "Gib den Pfad ein oder drücke ENTER für Standard:"
+    read -p "> " USER_INPUT
 
     # Wenn nur ENTER gedrückt wurde, Default-Wert nehmen und Schleife beenden
     if [[ -z "$USER_INPUT" ]]; then
@@ -182,7 +183,7 @@ blacklist rtl820t
 EOF
 
 # Zielordner erstellen
-mkdir -p $TARGET_PATH
+mkdir -p "$TARGET_PATH"
 
 # Konfigurationsdatei config.yaml erstellen
 WRITE_CONFIG=true
