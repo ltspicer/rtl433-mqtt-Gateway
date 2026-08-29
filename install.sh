@@ -18,12 +18,12 @@ LOG_PATH="/var/log/rtl433-mqtt.log"
 echo "This script compiles and installs the rtl_433 library."
 echo "In addition, various packages will be installed."
 echo "It also creates a service in systemd."
-echo "That is why root privileges are required."
+echo "For these reasons, root privileges are required."
 echo
 echo "Dieses Script kompiliert und installiert die rtl_433 Bibliothek."
 echo "Zudem werden diverse Pakete installiert."
 echo "Des Weiteren wird ein Dienst in systemd angelegt."
-echo "Darum ist eine root Berechtigung notwendig."
+echo "Aus diesen Gründen ist eine root Berechtigung notwendig."
 echo
 
 # Prüfen, ob das Script als Root läuft
@@ -42,9 +42,11 @@ echo "SDR-Stick jetzt einstecken!"
 echo
 
 # Benutzer fragen
-echo "Please enter the installation path"
-echo "Bitte Installationspfad eingeben"
-read -p "ENTER = $DEFAULT_PATH : " USER_INPUT
+echo "Please enter the installation path. Default: $DEFAULT_PATH"
+echo "Bitte Installationspfad eingeben. Standard: $DEFAULT_PATH"
+echo
+echo "CTRL & C = Cancel / Abbruch"
+read -p "Enter path or press ENTER for default: " USER_INPUT
 
 # Wenn nur ENTER, Default-Wert nehmen
 TARGET_PATH="${USER_INPUT:-$DEFAULT_PATH}"
