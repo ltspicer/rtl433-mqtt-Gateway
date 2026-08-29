@@ -17,10 +17,20 @@ LOG_PATH="/var/log/rtl433-mqtt.log"
 
 # Prüfen, ob das Skript als Root läuft
 if [[ $EUID -ne 0 ]]; then
-   echo "This script MUST be run with root privileges! / Dieses Skript MUSS mit root-Rechten ausgeführt werden!"
-   echo "Please run it like this: sudo $0"
-   echo "Bitte starte es so: sudo $0"
-   exit 1
+    echo "This script compiles and installs the rtl_433 library."
+    echo "In addition, various packages will be installed."
+    echo "It also creates a service in systemd."
+    echo "That is why root privileges are required."
+    echo "This script MUST be run with root privileges!"
+    echo "Please run it like this: sudo $0"
+
+    echo "Dieses Script Kompiliert und installiert die rtl_433 Bibliothek."
+    echo "Zudem werden diverse Pakete installiert."
+    echo "Des Weiteren wird ein Dienst in systemd angelegt."
+    echo "Darum ist eine root Berechtigung notwendig."
+    echo "Dieses Skript MUSS mit root-Rechten ausgeführt werden!"
+    echo "Bitte starte es so: sudo $0"
+    exit 1
 fi
 
 # Benutzer fragen
