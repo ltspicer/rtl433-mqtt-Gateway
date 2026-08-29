@@ -3,7 +3,7 @@
 #######################################################
 #      Send 433MHz weather sensors data via MQTT
 #                rtl433-mqtt Gateway
-#                   V2.1 (C) 2026
+#                   V2.2 (C) 2026
 #                  Daniel Luginbühl
 #######################################################
 
@@ -109,11 +109,8 @@ def save_weather_states(state):
     except Exception as e:
         logging.error(f"Fehler beim Speichern der Regenstopps: {e}")
 
+# Berechnet alle Regen- und Windstatistiken
 def calculate_weather_stats(sensor_id, current_total_rain, current_wind):
-    """
-    Berechnet alle Regen- und Windstatistiken in einem einzigen Rutsch,
-    um doppelte Schlüssel im JSON-Zustand zuverlässig zu verhindern.
-    """
     state = load_weather_states()  # Datei laden
     now = time.time()
     ltime = time.localtime(now)
@@ -151,12 +148,27 @@ def calculate_weather_stats(sensor_id, current_total_rain, current_wind):
     w_state = state[sensor_id]["wind_stats"]
 
     # --- REGEN-BERECHNUNG ---
+    # Erkennung eines Batteriewechsels / Resets (Wert fällt stark ab oder geht auf 0)
     if current_total_rain < r_state["last_total"]:
-        diff_offset = r_state["last_total"] - current_total_rain
-        r_state["hour_start_total"] = max(0.0, r_state["hour_start_total"] - diff_offset)
-        r_state["day_start_total"] = max(0.0, r_state["day_start_total"] - diff_offset)
-        r_state["month_start_total"] = max(0.0, r_state["month_start_total"] - diff_offset)
-        r_state["year_start_total"] = max(0.0, r_state["year_start_total"] - diff_offset)
+        if current_total_rain == 0.0 or (r_state["last_total"] - current_total_rain) > 10.0:
+            # BATTERIEWECHSEL ERKANNT:
+            r_state["hour_start_total"] = 0.0
+            r_state["day_start_total"] = 0.0
+            r_state["month_start_total"] = 0.0
+            r_state["year_start_total"] = 0.0
+            
+            # Start-Wert im Minus annehmen, um den bisherigen Wert einzufrieren.
+            r_state["hour_start_total"] = current_total_rain - r_state["hourRainfall"]
+            r_state["day_start_total"] = current_total_rain - r_state["dayRainfall"]
+            r_state["month_start_total"] = current_total_rain - r_state["monthRainfall"]
+            r_state["year_start_total"] = current_total_rain - r_state["yearRainfall"]
+        else:
+            # Kleinerer Rücksprung (z.B. Signalfehler)
+            diff_offset = r_state["last_total"] - current_total_rain
+            r_state["hour_start_total"] = max(0.0, r_state["hour_start_total"] - diff_offset)
+            r_state["day_start_total"] = max(0.0, r_state["day_start_total"] - diff_offset)
+            r_state["month_start_total"] = max(0.0, r_state["month_start_total"] - diff_offset)
+            r_state["year_start_total"] = max(0.0, r_state["year_start_total"] - diff_offset)
 
     if current_hour_str != r_state["hour_key"]:
         r_state["hour_key"] = current_hour_str
