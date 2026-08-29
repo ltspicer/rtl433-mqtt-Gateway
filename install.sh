@@ -47,7 +47,8 @@ while true; do
     echo "Bitte Installationspfad eingeben. Standard: $DEFAULT_PATH"
     echo
     echo "CTRL & C = Cancel / Abbruch"
-    read -p "Enter path or press ENTER for default: " USER_INPUT
+    echo "Enter path or press ENTER for default:"
+    read -p "Gib den Pfad ein oder drücke ENTER für Standard:" USER_INPUT
 
     # Wenn nur ENTER gedrückt wurde, Default-Wert nehmen und Schleife beenden
     if [[ -z "$USER_INPUT" ]]; then
