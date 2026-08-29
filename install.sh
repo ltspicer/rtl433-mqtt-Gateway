@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo ""
+echo
 echo "#################################"
 echo "#      rtl433-mqtt Gateway      #"
 echo "#      Install Script V1.1      #"
@@ -9,44 +9,50 @@ echo "#      by Daniel Luginbuehl     #"
 echo "#   webmaster@ltspiceusers.ch   #"
 echo "#          (c) 2026             #"
 echo "#################################"
-echo ""
+echo
 
 # Standard Pfade definieren
 DEFAULT_PATH="/opt/rtl433-mqtt"
 LOG_PATH="/var/log/rtl433-mqtt.log"
 
-# Prüfen, ob das Skript als Root läuft
+echo "This script compiles and installs the rtl_433 library."
+echo "In addition, various packages will be installed."
+echo "It also creates a service in systemd."
+echo "That is why root privileges are required."
+echo
+echo "Dieses Script kompiliert und installiert die rtl_433 Bibliothek."
+echo "Zudem werden diverse Pakete installiert."
+echo "Des Weiteren wird ein Dienst in systemd angelegt."
+echo "Darum ist eine root Berechtigung notwendig."
+echo
+
+# Prüfen, ob das Script als Root läuft
 if [[ $EUID -ne 0 ]]; then
-    echo "This script compiles and installs the rtl_433 library."
-    echo "In addition, various packages will be installed."
-    echo "It also creates a service in systemd."
-    echo "That is why root privileges are required."
     echo "This script MUST be run with root privileges!"
     echo "Please run it like this: sudo $0"
     echo
-    echo "Dieses Script kompiliert und installiert die rtl_433 Bibliothek."
-    echo "Zudem werden diverse Pakete installiert."
-    echo "Des Weiteren wird ein Dienst in systemd angelegt."
-    echo "Darum ist eine root Berechtigung notwendig."
-    echo "Dieses Skript MUSS mit root-Rechten ausgeführt werden!"
+    echo "Dieses Script MUSS mit root-Rechten ausgeführt werden!"
     echo "Bitte starte es so: sudo $0"
     echo
     exit 1
 fi
 
-echo
 echo "Plug in the SDR stick now!"
 echo "SDR-Stick jetzt einstecken!"
 echo
 
 # Benutzer fragen
-read -p "Please enter the installation path / Bitte Installationspfad eingeben [default: $DEFAULT_PATH]: " USER_INPUT
+echo "Please enter the installation path"
+echo "Bitte Installationspfad eingeben"
+read -p "ENTER = $DEFAULT_PATH : " USER_INPUT
 
-# Wenn nur Enter, den Default-Wert nehmen
+# Wenn nur ENTER, Default-Wert nehmen
 TARGET_PATH="${USER_INPUT:-$DEFAULT_PATH}"
 
-# Test-Ausgabe zur Kontrolle
-echo "The script will be installed in: / Das Skript wird installiert in: $TARGET_PATH"
+# Info-Ausgabe zur Kontrolle
+echo
+echo "The script will be installed in: / Das Script wird installiert in: $TARGET_PATH"
+echo
 
 # Prüfen, ob eine alte "rtl_433" Version im System gefunden wird
 if command -v rtl_433 &> /dev/null; then
