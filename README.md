@@ -33,6 +33,8 @@ Wenn der Installer erfolgreich durchgelaufen ist, sind **keine weiteren Schritte
 
 ---
 
+## Manuelle Installation
+
 ## 1. rtl_433 aus den Quellen kompilieren
 
 Um die neuesten Sensoren zu unterstützen, sollte `rtl_433` direkt aus dem offiziellen GitHub-Repository kompiliert werden.
