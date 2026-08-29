@@ -29,6 +29,8 @@ chmod +x install.sh
 sudo ./install.sh
 ```
 
+Weitere Schritte sind nicht notwendig. Viel Spass
+
 ---
 
 ## 1. rtl_433 aus den Quellen kompilieren
@@ -57,6 +59,8 @@ rtl_433 -V
 *Hinweis: Sollte noch eine alte Version aktiv sein, die zuvor via `apt` installiert wurde, deinstalliere sie mit:*
 
 `sudo apt remove rtl-433 && hash -r`
+
+### Jetzt SDR-Stick einstecken
 
 ---
 
