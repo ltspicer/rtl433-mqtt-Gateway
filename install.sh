@@ -24,7 +24,7 @@ if [[ $EUID -ne 0 ]]; then
     echo "This script MUST be run with root privileges!"
     echo "Please run it like this: sudo $0"
     echo
-    echo "Dieses Script Kompiliert und installiert die rtl_433 Bibliothek."
+    echo "Dieses Script kompiliert und installiert die rtl_433 Bibliothek."
     echo "Zudem werden diverse Pakete installiert."
     echo "Des Weiteren wird ein Dienst in systemd angelegt."
     echo "Darum ist eine root Berechtigung notwendig."
