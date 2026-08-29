@@ -34,6 +34,11 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
+echo
+echo "Plug in the SDR stick now!"
+echo "SDR-Stick jetzt einstecken!"
+echo
+
 # Benutzer fragen
 read -p "Please enter the installation path / Bitte Installationspfad eingeben [default: $DEFAULT_PATH]: " USER_INPUT
 
