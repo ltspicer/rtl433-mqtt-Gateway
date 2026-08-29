@@ -74,6 +74,17 @@ while [[ "$TARGET_PATH" == */ ]]; do
     TARGET_PATH="${TARGET_PATH%/}"
 done
 
+# Wenn Pfad leer, dann exit
+if [[ -z "$TARGET_PATH" ]]; then
+    echo
+    echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    echo "ERROR: Target path is empty! Installation aborted."
+    echo "FEHLER: Zielpfad ist leer! Installation abgebrochen."
+    echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    echo
+    exit 1
+fi
+
 # Info-Ausgabe zur Kontrolle
 echo
 echo "The script will be installed in: / Das Script wird installiert in: $TARGET_PATH"
