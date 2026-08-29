@@ -4,7 +4,7 @@ Dieses Projekt stellt eine ereignisgesteuerte Bridge bereit, die mithilfe eines 
 
 Bei mir läuft dieses Script in einem Proxmox LXC (Container) mit Debian. Da arbeite ich direkt als User root. Wenn das bei dir auch der Fall ist, dann verwende kein `sudo` !
 
-Selbstverständlich läuft das auch auf einem Raspberry. Es wird nur minimal CPU Leistung benötigt (weniger als 2%).
+Selbstverständlich läuft das auch auf einem Raspberry. Es wird weniger als 2% CPU Leistung benötigt.
 
 Ich nutze einen "RTL2832U & R828D SDR USB2.0 TV-Stick-Tuner 25 MHz bis 1760 MHz" von
 
