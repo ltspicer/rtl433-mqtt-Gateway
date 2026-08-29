@@ -42,14 +42,37 @@ echo "SDR-Stick jetzt einstecken!"
 echo
 
 # Benutzer fragen
-echo "Please enter the installation path. Default: $DEFAULT_PATH"
-echo "Bitte Installationspfad eingeben. Standard: $DEFAULT_PATH"
-echo
-echo "CTRL & C = Cancel / Abbruch"
-read -p "Enter path or press ENTER for default: " USER_INPUT
+while true; do
+    echo "Please enter the installation path. Default: $DEFAULT_PATH"
+    echo "Bitte Installationspfad eingeben. Standard: $DEFAULT_PATH"
+    echo
+    echo "CTRL & C = Cancel / Abbruch"
+    read -p "Enter path or press ENTER for default: " USER_INPUT
 
-# Wenn nur ENTER, Default-Wert nehmen
-TARGET_PATH="${USER_INPUT:-$DEFAULT_PATH}"
+    # Wenn nur ENTER gedrückt wurde, Default-Wert nehmen und Schleife beenden
+    if [[ -z "$USER_INPUT" ]]; then
+        TARGET_PATH="$DEFAULT_PATH"
+        break
+    fi
+
+    # Prüfen, ob der Pfad mit einem "/" beginnt (absoluter Pfad)
+    if [[ "$USER_INPUT" =~ ^/ ]]; then
+        TARGET_PATH="$USER_INPUT"
+        break
+    else
+        echo
+        echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        echo "ERROR: Invalid path! The path must be absolute and start with a '/'."
+        echo "FEHLER: Ungültiger Pfad! Der Pfad muss absolut sein und mit einem '/' beginnen."
+        echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        echo
+    fi
+done
+
+# Entfernt ALLE Schrägstriche am Ende der Variable
+while [[ "$TARGET_PATH" == */ ]]; do
+    TARGET_PATH="${TARGET_PATH%/}"
+done
 
 # Info-Ausgabe zur Kontrolle
 echo
