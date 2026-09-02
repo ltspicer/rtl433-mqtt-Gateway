@@ -209,8 +209,8 @@ rtl_433:
   frequency: "434M"
 
   # Entweder eine Liste von Modellen:
-  model_filter:
-    - "Emax-W6"
+#  model_filter:
+#    - "Emax-W6"
 #    - "LaCrosse-TX141THBv2"         # Beispiel für einen zweiten Sensor
 #    - "inFactory_TH"                # Beispiel für einen dritten Sensor
 #    - "Nexus-TH"                    # Beispiel für einen vierten Sensor
