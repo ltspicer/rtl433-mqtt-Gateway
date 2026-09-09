@@ -3,7 +3,7 @@
 echo
 echo "#################################"
 echo "#      rtl433-mqtt Gateway      #"
-echo "#      Install Script V1.2      #"
+echo "#      Install Script V1.3      #"
 echo "#      for Debian based OS      #"
 echo "#      by Daniel Luginbuehl     #"
 echo "#   webmaster@ltspiceusers.ch   #"
@@ -229,6 +229,7 @@ mqtt:
   username: "dein_user"              # Leer lassen, falls keine Authentifizierung notwendig ist
   password: "dein_password"          # Leer lassen, falls keine Authentifizierung notwendig ist
   debounce: false                    # Bei true werden nur geänderte Daten gesendet
+  use_mqtt: true                     # MQTT benutzen
 
 logging:
   file: "TARGET_LOG_PLACEHOLDER"

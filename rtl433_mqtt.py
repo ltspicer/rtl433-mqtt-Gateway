@@ -3,7 +3,7 @@
 #######################################################
 #      Send 433MHz weather sensors data via MQTT
 #                rtl433-mqtt Gateway
-#                   V2.2 (C) 2026
+#                   V2.3 (C) 2026
 #                  Daniel Luginbühl
 #######################################################
 
@@ -70,27 +70,31 @@ MQTT_HOST = cfg["mqtt"]["host"]
 MQTT_PORT = cfg["mqtt"]["port"]
 BASE_TOPIC = cfg.get("mqtt", {}).get("base_topic", "weatherstation/sdr")
 DEBOUNCE = cfg.get("mqtt", {}).get("debounce", False)
+USE_MQTT = cfg.get("mqtt", {}).get("use_mqtt", True)
 
 if MODEL_FILTER is None:
     MODEL_FILTER = "ALL"
 
 # 1. MQTT Client aufbauen
-mqttc = mqtt.Client(client_id="rtl433_sdr_bridge", clean_session=True)
+if USE_MQTT:
+    mqttc = mqtt.Client(client_id="rtl433_sdr_bridge", clean_session=True)
 
-mqtt_user = cfg["mqtt"].get("username")
-mqtt_pass = cfg["mqtt"].get("password")
-if mqtt_user and mqtt_pass:
-    mqttc.username_pw_set(mqtt_user, mqtt_pass)
+    mqtt_user = cfg["mqtt"].get("username")
+    mqtt_pass = cfg["mqtt"].get("password")
+    if mqtt_user and mqtt_pass:
+        mqttc.username_pw_set(mqtt_user, mqtt_pass)
 
-try:
-    mqttc.connect(MQTT_HOST, MQTT_PORT)
-    mqttc.loop_start()
-    logging.info("Connected to MQTT Broker successfully")
-except Exception as e:
-    logging.error(f"MQTT Connection failed: {e}")
-    if DEBUG_MODE:
-        print(f"{get_now_ms()} [!] MQTT Fehler: {e}")
-    exit(1)
+    try:
+        mqttc.connect(MQTT_HOST, MQTT_PORT)
+        mqttc.loop_start()
+        logging.info("Connected to MQTT Broker successfully")
+    except Exception as e:
+        logging.error(f"MQTT Connection failed: {e}")
+        if DEBUG_MODE:
+            print(f"{get_now_ms()} [!] MQTT Fehler: {e}")
+        exit(1)
+else:
+    logging.warning("MQTT is inactiv!")
 
 # 2. Funktionen für die zusätzlichen Regenwerte
 def load_weather_states():
@@ -276,7 +280,8 @@ for line in proc.stdout:
         logging.info("Config changed, restarting script...")
         if DEBUG_MODE:
             print(f"{get_now_ms()} [*] Konfiguration geändert, starte Skript neu...")
-        mqttc.loop_stop()
+        if USE_MQTT:
+            mqttc.loop_stop()
         proc.terminate()
         exit(0)
 
@@ -332,7 +337,8 @@ for line in proc.stdout:
                         continue
                     last_values[topic] = value
 
-            mqttc.publish(topic, str(value), retain=True)
+            if USE_MQTT:
+                mqttc.publish(topic, str(value), retain=True)
             
             if DEBUG_MODE:
                 print(f"    -> MQTT Publish: {topic} = {value}")
@@ -394,7 +400,8 @@ for line in proc.stdout:
         # 4. Alle berechneten Werte (Regen, Wind, Celsius) auf einmal senden
         for w_key, w_value in extra_weather_data.items():
             w_topic = f"{BASE_TOPIC}/{sanitize(current_model)}/{sensor_id}/{w_key}"
-            mqttc.publish(w_topic, str(w_value), retain=True)
+            if USE_MQTT:
+                mqttc.publish(w_topic, str(w_value), retain=True)
             if DEBUG_MODE:
                 print(f"    -> MQTT Publish (Calculated): {w_topic} = {w_value} ({get_now_ms()})")
 

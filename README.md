@@ -103,6 +103,7 @@ mqtt:
   username: "dein_user"              # Leer lassen, falls keine Authentifizierung notwendig ist
   password: "dein_password"          # Leer lassen, falls keine Authentifizierung notwendig ist
   debounce: false                    # Bei true werden nur geänderte Daten gesendet
+  use_mqtt: true                     # MQTT benutzen
 
 logging:
   file: "/var/log/rtl433-mqtt.log"
