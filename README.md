@@ -170,3 +170,7 @@ sudo reboot
 systemctl status rtl433-mqtt.service
 sudo journalctl -u rtl433-mqtt.service -f
 ```
+
+## 4. Infos und Tipps zur Anwendung
+
+Manche Sender (zBsp "LaCrosse-TX141THBv2") ändern die ID bei einem Batteriewechsel.
